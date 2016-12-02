@@ -1,13 +1,17 @@
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE OverloadedStrings #-}
 module Main where
 
 import Servant
---import 
+import Servant.Mock
+import Model
 import qualified Network.Wai.Handler.Warp as Warp
 
-type UsersApi = "users" :> Get '[JSON] [Todo]
+type UsersAPI = "users" :> Get '[JSON] [User]
 
-api :: Proxy API
-api = Proxy
+userApi :: Proxy UsersAPI
+userApi = Proxy
 
 main :: IO ()
-main = someFunc
+main = Warp.run 8080 $ serve userApi (mock userApi mempty)
