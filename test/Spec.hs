@@ -36,11 +36,11 @@ spec = with (return app) $ do
                    |]
 
     it "Create user" $ do
-      post "/" user1JSON `shouldRespondWith` 200
-      post "/" user2JSON `shouldRespondWith` 200
+      post "/users" user1JSON `shouldRespondWith` 200
+      post "/users" user2JSON `shouldRespondWith` 200
 
     it "Get users" $ do
-      get "/" `shouldRespondWith` [json|
+      get "/users" `shouldRespondWith` [json|
            [{
              "userName": "Yusuke Sangenya",
              "userMail": "example1@example.com",
@@ -54,7 +54,7 @@ spec = with (return app) $ do
          |]
     
     it "Get user" $ do
-      get "/1" `shouldRespondWith` [json|
+      get "/users/1" `shouldRespondWith` [json|
            {
              "userName": "Yusuke Sangenya",
              "userMail": "example1@example.com",
@@ -63,12 +63,12 @@ spec = with (return app) $ do
          |]
 
     it "Delete user" $ do
-      delete "/2" `shouldRespondWith` 200
-      get "/2" `shouldRespondWith` 404
+      delete "/users/2" `shouldRespondWith` 200
+      get "/users/2" `shouldRespondWith` 404
 
     it "Update user" $ do
-      put "/1" user2JSON `shouldRespondWith` 200
-      get "/1" `shouldRespondWith` [json|
+      put "/users/1" user2JSON `shouldRespondWith` 200
+      get "/users/1" `shouldRespondWith` [json|
           {
             "userName": "Yusuke Sangenya",
             "userMail": "example2@example.com",
