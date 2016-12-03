@@ -7,6 +7,7 @@
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TypeFamilies               #-}
 {-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE OverloadedStrings          #-}
 
 module Model where
 
@@ -19,6 +20,13 @@ import           GHC.Generics
 import           Data.Aeson
 import           Test.QuickCheck
 import           Data.Text.Arbitrary
+import           Control.Monad.IO.Class
+
+import Control.Monad.Trans.Control
+import Control.Monad.Trans.Reader
+import Control.Monad.Logger
+import Control.Monad.Trans.Resource.Internal
+
 
 share [mkPersist sqlSettings, mkMigrate "migrateAll"] [persistLowerCase|
   User
@@ -62,3 +70,6 @@ instance ToJSON Occupation
 
 instance Arbitrary User where
   arbitrary = User <$> arbitrary <*> arbitrary <*> arbitrary
+
+runDB :: (MonadBaseControl IO m, MonadIO m) => ReaderT SqlBackend (NoLoggingT (ResourceT m)) a -> m a
+runDB query = runSqlite "db/db.sqlite3" query
